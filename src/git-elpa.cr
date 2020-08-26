@@ -337,7 +337,17 @@ EOD
       exit(0)
     end
 
-    opts.on "-C", "--cleanup", "Cleanup stray elpa txt files" do
+    opts.on "-K", "--cleanup", "Perform git cleanup in ~/.emacs.d" do
+      cd_to_emacs_d
+      run_cmd("git", ["clean", "-fd"] )
+    end
+
+    opts.on "-X", "--reset-hard", "Perform git reset --hard on ~/.emacs.d" do
+      cd_to_emacs_d
+      run_cmd("git", ["reset", "--hard"] )
+    end
+
+    opts.on "-C", "--cleantxt", "Cleanup of ELPA .txt files" do
       log("Cleaning out elpa .txt files")
       unwanted_text_files_pattern = File.join(ENV["HOME"], "emacs.d", "elpa", "*.txt")
       if Dir.glob(unwanted_text_files_pattern).empty?
