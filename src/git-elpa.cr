@@ -199,8 +199,11 @@ EOD
 
     def generate_commit_message
       versions_label = pluralise("version", @old.size) if @old && @old.size > 0
+
       return remove_package_message(versions_label) if @ver.nil? && @old.size > 0
+
       return updating_new_and_remove_old_package_message(versions_label) if @old.size > 0
+
       return adding_new_package_message if @old.size.zero?
     end
 
