@@ -1,0 +1,13 @@
+name: git-elpa
+version: 0.1.0
+
+authors:
+  - Jason Milkins <jasonm23@gmail.com>
+
+targets:
+  git-elpa:
+    main: src/git-elpa.cr
+
+crystal: 0.35.1
+
+license: MIT
