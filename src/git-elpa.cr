@@ -121,9 +121,9 @@ EOD
 
   class GitElpa
 
-    @old : Array(Nil | String) = [] of (Nil | String)
+    @old = Array(Nil | String).new
     @ver : Nil | String = nil
-    @rx : Regex = %r{}
+    @rx = %r{}
 
     def initialize
     end
