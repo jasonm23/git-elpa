@@ -138,26 +138,20 @@ EOD
       status_rows = git_status[1].split("\n")
       a_or_d_git_status_items_rx = %r{^( D | A |[?]{2} )elpa/.*}
 
-      updatable = status_rows.select! {|line|
+      status_rows.select! {|line|
         a_or_d_git_status_items_rx.match(line)
       }.uniq
-
-      updatable
     end
 
     def updated_packages
       package_name = %r{^(.*)-.*?$}
 
-      updatable = updatable_files_from_git_status
-                  .map { |name| name[8..name.size] }
-      updated_names = updatable.map { |u|
+      updatable_files_from_git_status
+        .map { |name| name[8..name.size] }
+        .map { |u|
         md = package_name.match(u)
         md[1] if md
       }.uniq.compact.sort
-
-      return if updated_names.empty?
-
-      updated_names
     end
 
     def commit_package(package : String, do_commit = true)
