@@ -2,15 +2,29 @@ require "file_utils"
 require "spec"
 require "../src/git-elpa"
 
-MOCK_DIR = File.tempname(".emacs.d")
+FAKE_DIR = File.tempname(".emacs.d")
 
+# Spy on logs
+def log(str)
+  "#{ANSI_MESSAGE}#{str}#{ANSI_RESET}"
+end
+
+def log_warning(str)
+  "#{ANSI_WARNING}#{str}#{ANSI_RESET}"
+end
+
+def log_error(str)
+  "#{ANSI_WARNING}#{str}#{ANSI_RESET}"
+end
+
+# Fake emacs_d
 def cd_to_emacs_d
-  Dir.cd(MOCK_DIR)
+  Dir.cd(FAKE_DIR)
 end
 
 def create_mock_repo
-  Dir.mkdir(MOCK_DIR)
-  Dir.cd(MOCK_DIR)
+  Dir.mkdir(FAKE_DIR)
+  Dir.cd(FAKE_DIR)
 
   run_cmd("git", ["init"])
 
@@ -38,14 +52,14 @@ def create_mock_repo
     ].each do |file|
       File.touch(file)
     end
-    Dir.cd(MOCK_DIR)
+    Dir.cd(FAKE_DIR)
     Dir.cd("elpa")
   end
 
-  Dir.cd(MOCK_DIR)
+  Dir.cd(FAKE_DIR)
 
 end
 
 def teardown_mock_repo
-  FileUtils.rm_r(MOCK_DIR)
+  FileUtils.rm_r(FAKE_DIR)
 end

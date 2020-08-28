@@ -1,9 +1,19 @@
 require "./spec_helper"
 
+
 describe Git::Elpa do
 
   before_each do
     create_mock_repo
+    # We start with the following fake git repo tree
+
+    # .emacs.d
+    # └── elpa
+    #     ├── FakePackageFour-0.1.0
+    #     ├── FakePackageOne-0.1.0
+    #     ├── FakePackageThree-0.1.0
+    #     └── FakePackageTwo-0.1.0
+    #
   end
 
   after_each do
@@ -57,6 +67,14 @@ describe Git::Elpa do
       it "creates a git commit for a package" do
         git_elpa.commit_package("FakePackageOne")
         git_elpa.updated_packages.should_not contain "FakePackageOne"
+      end
+    end
+
+    describe "commit_all_packages" do
+      it "creates git commits for all packages" do
+        git_elpa.commit_all_packages
+        git_elpa.updated_packages.should eq [] of String | Nil
+        run_cmd("git", ["log", "--oneline"])[1].split("\n").size.should eq 6
       end
     end
 
