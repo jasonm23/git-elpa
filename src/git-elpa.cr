@@ -136,7 +136,7 @@ EOD
       cd_to_emacs_d
       git_status = run_cmd("git", ["status", "-s"])
       status_rows = git_status[1].split("\n")
-      a_or_d_git_status_items_rx = %r{^( D | A |[?]{2} )elpa/.*}
+      a_or_d_git_status_items_rx = %r{^( D | A |\?\? )elpa/.*}
 
       status_rows.select! {|line|
         a_or_d_git_status_items_rx.match(line)
@@ -144,7 +144,7 @@ EOD
     end
 
     def updated_packages
-      package_name = %r{^(.*)-.*?$}
+      package_name = %r{^(.*?)-.*?$}
 
       updatable_files_from_git_status
         .map { |name| name[8..name.size] }
@@ -159,7 +159,6 @@ EOD
       @rx = %r{(^elpa/)(#{@package})-(.*)/}
       @old = old_versions
       @ver = new_version
-
       commit if do_commit
     end
 
@@ -224,7 +223,7 @@ EOD
       git_commit(message)
     end
 
-    def new_version : String
+    def new_version : String | Nil
       versions : Array(String) =
         new_version_files
         .map { |f|
@@ -239,12 +238,7 @@ EOD
         exit(1)
       end
 
-      if versions.size < 1
-        log_warning("There are no new versions of #{@package}")
-        exit(1)
-      end
-
-      versions[0]
+      versions[0] if versions.size == 1
     end
 
     def old_versions : Array(Nil | String)
