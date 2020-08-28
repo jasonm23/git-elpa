@@ -82,6 +82,29 @@ describe Git::Elpa do
         remove_old_package_fake("FakePackageOne", "0.1.0")
       end
 
+      describe "commit_all_packages" do
+
+        before_each do
+          create_new_package_fake("FakePackageTwo", "0.1.1")
+          remove_old_package_fake("FakePackageTwo", "0.1.0")
+
+          create_new_package_fake("FakePackageThree", "0.1.1")
+          remove_old_package_fake("FakePackageThree", "0.1.0")
+
+          create_new_package_fake("FakePackageFour", "0.1.1")
+          remove_old_package_fake("FakePackageFour", "0.1.0")
+
+          create_new_package_fake("Foo", "0.1.0")
+          create_new_package_fake("Bar", "0.1.0")
+          create_new_package_fake("Baz", "0.1.0")
+        end
+
+        it "commits all packages" do
+          git_elpa.commit_all_packages
+          git_elpa.updated_packages.should eq [] of String | Nil
+        end
+      end
+
       describe "commit_package" do
 
         context "new package" do
