@@ -88,7 +88,6 @@ describe Git::Elpa do
           create_new_package_fake("FakePackageTwo", "0.1.1")
           remove_old_package_fake("FakePackageTwo", "0.1.0")
 
-          create_new_package_fake("FakePackageThree", "0.1.1")
           remove_old_package_fake("FakePackageThree", "0.1.0")
 
           create_new_package_fake("FakePackageFour", "0.1.1")
