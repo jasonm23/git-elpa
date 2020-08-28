@@ -21,13 +21,12 @@ describe Git::Elpa do
     describe "updatable_files_from_git_status" do
       it "lists updatable files from git status" do
         git_elpa.updatable_files_from_git_status
-          .sort
           .should eq [
+             "?? elpa/FakePackageFour-0.1.0/",
              "?? elpa/FakePackageOne-0.1.0/",
-             "?? elpa/FakePackageTwo-0.1.0/",
              "?? elpa/FakePackageThree-0.1.0/",
-             "?? elpa/FakePackageFour-0.1.0/"
-           ].sort
+             "?? elpa/FakePackageTwo-0.1.0/",
+           ]
       end
     end
 
@@ -35,11 +34,11 @@ describe Git::Elpa do
       it "lists the names of updated packages" do
         git_elpa.updated_packages
           .should eq [
+             "FakePackageFour",
              "FakePackageOne",
-             "FakePackageTwo",
              "FakePackageThree",
-             "FakePackageFour"
-           ].sort
+             "FakePackageTwo",
+           ]
       end
     end
 
@@ -49,6 +48,15 @@ describe Git::Elpa do
           git_elpa.commit_package("FakePackageOne", false)
           git_elpa.generate_commit_message.should eq "[Adding FakePackageOne version: 0.1.0]"
         end
+      end
+
+
+    end
+
+    describe "commit_package" do
+      it "creates a git commit for a package" do
+        git_elpa.commit_package("FakePackageOne")
+        git_elpa.updated_packages.should_not contain "FakePackageOne"
       end
     end
 
