@@ -143,15 +143,19 @@ EOD
       }.uniq
     end
 
-    def updated_packages
-      package_name = %r{^(.*?)-.*?$}
+    def list_updated_packages
+      package_name_rx = %r{^(.*)-(.*?)/(.*)$}
 
       updatable_files_from_git_status
         .map { |name| name[8..name.size] }
-        .map { |u|
-        md = package_name.match(u)
-        md[1] if md
-      }.uniq.compact.sort
+        .map { |git_file_from_status|
+        package_name_rx
+          .match(git_file_from_status)
+          .try(&.[1])
+      }
+        .uniq
+        .compact
+        .sort
     end
 
     def commit_package(package : String, do_commit = true)
@@ -163,12 +167,12 @@ EOD
     end
 
     def commit_all_packages
-      if updated_packages.nil?
+      if list_updated_packages.nil?
         log "No updated Emacs packages"
         return
       end
 
-      updated_packages.try &.each do |p|
+      list_updated_packages.try &.each do |p|
         commit_package(p)
       end
     end
@@ -296,13 +300,13 @@ EOD
     end
 
     opts.on("-l", "--list", "List updated packages") do
-      package_list = elpa.updated_packages
+      package_list = elpa.list_updated_packages
       if package_list.nil?
         log "No updated Emacs packages"
         exit(1)
       else
         log "Listing updated ELPA packages...(to be committed)"
-        puts elpa.updated_packages.try &.join("/n")
+        puts elpa.list_updated_packages.try &.join("\n")
         exit(0)
       end
     end

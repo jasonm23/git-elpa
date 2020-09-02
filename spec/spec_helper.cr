@@ -4,6 +4,18 @@ require "../src/git-elpa"
 
 FAKE_DIR = File.tempname(".emacs.d")
 
+def run_cmd(cmd, args)
+  args_clean : Array(String) = args.compact!.map(&.as(String))
+  stdout = IO::Memory.new
+  stderr = IO::Memory.new
+  status = Process.run(cmd, args: args_clean, output: stdout, error: stderr)
+  if status.success?
+    {status.exit_code, stdout.to_s}
+  else
+    {status.exit_code, stderr.to_s}
+  end
+end
+
 class String
   def kebab
     underscore.tr("_", "-")
@@ -93,7 +105,8 @@ def create_mock_repo
     "FakePackageOne",
     "FakePackageTwo",
     "FakePackageThree",
-    "FakePackageFour"
+    "FakePackageFour",
+    "company-lsp",
   ].each do |package|
     create_new_package_fake(package, "0.1.0")
   end

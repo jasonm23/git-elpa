@@ -1,6 +1,5 @@
 require "./spec_helper"
 
-
 describe Git::Elpa do
 
   before_each do
@@ -36,18 +35,20 @@ describe Git::Elpa do
              "?? elpa/FakePackageOne-0.1.0/",
              "?? elpa/FakePackageThree-0.1.0/",
              "?? elpa/FakePackageTwo-0.1.0/",
+             "?? elpa/company-lsp-0.1.0/",
            ]
       end
     end
 
-    describe "updated_packages" do
+    describe "list_updated_packages" do
       it "lists the names of updated packages" do
-        git_elpa.updated_packages
+        git_elpa.list_updated_packages
           .should eq [
              "FakePackageFour",
              "FakePackageOne",
              "FakePackageThree",
              "FakePackageTwo",
+             "company-lsp",
            ]
       end
     end
@@ -64,14 +65,14 @@ describe Git::Elpa do
     describe "commit_package" do
       it "creates a git commit for a package" do
         git_elpa.commit_package("FakePackageOne")
-        git_elpa.updated_packages.should_not contain "FakePackageOne"
+        git_elpa.list_updated_packages.should_not contain "FakePackageOne"
       end
     end
 
     describe "commit_all_packages" do
       it "creates git commits for all packages" do
         git_elpa.commit_all_packages
-        git_elpa.updated_packages.should eq [] of String | Nil
+        git_elpa.list_updated_packages.should eq [] of String | Nil
       end
     end
 
@@ -100,7 +101,7 @@ describe Git::Elpa do
 
         it "commits all packages" do
           git_elpa.commit_all_packages
-          git_elpa.updated_packages.should eq [] of String | Nil
+          git_elpa.list_updated_packages.should eq [] of String | Nil
         end
       end
 
@@ -109,20 +110,20 @@ describe Git::Elpa do
         context "new package" do
           it "should commit the new update" do
             git_elpa.commit_package("FakePackageOne")
-            git_elpa.updated_packages.should eq [] of String | Nil
+            git_elpa.list_updated_packages.should eq [] of String | Nil
           end
         end
 
         context "updated package" do
-          describe "updated_packages" do
+          describe "list_updated_packages" do
             it "shows the updated packages" do
-              git_elpa.updated_packages.should eq ["FakePackageOne"]
+              git_elpa.list_updated_packages.should eq ["FakePackageOne"]
             end
 
             context "after commit" do
               it "must not list any committed packages" do
                 git_elpa.commit_package("FakePackageOne")
-                git_elpa.updated_packages.should eq [] of String | Nil
+                git_elpa.list_updated_packages.should eq [] of String | Nil
               end
             end
 
@@ -139,13 +140,13 @@ describe Git::Elpa do
             end
 
             it "shows the removed package in the list of updated packages" do
-              git_elpa.updated_packages.should contain "FakePackageTwo"
+              git_elpa.list_updated_packages.should contain "FakePackageTwo"
             end
 
             describe "commit" do
               it "commits the package removal" do
                 git_elpa.commit_package "FakePackageTwo"
-                git_elpa.updated_packages.should_not contain "FakePackageTwo"
+                git_elpa.list_updated_packages.should_not contain "FakePackageTwo"
               end
             end
           end
