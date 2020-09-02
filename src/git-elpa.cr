@@ -287,6 +287,43 @@ EOD
       run_cmd("git", ["add", "elpa/archives"])
       git_commit("Updating elpa archives")
     end
+
+    def reset_custom
+      log("resetting custom.el")
+      cd_to_emacs_d
+      run_cmd("git", ["checkout", "custom/custom.el"])
+      log("done")
+    end
+
+    def cleanup_txt
+      log("Cleaning out elpa .txt files")
+      unwanted_text_files_pattern = File.join(ENV["HOME"], "emacs.d", "elpa", "*.txt")
+      if Dir.glob(unwanted_text_files_pattern).empty?
+        log("There are no unwanted .txt files in elpa.")
+      else
+        Dir.glob(unwanted_text_files_pattern).each do |file|
+          log_warning("Deleting: #{file}")
+          File.delete(file)
+        end
+      end
+      log("done")
+    end
+
+    def reset_hard
+      cd_to_emacs_d
+      run_cmd("git", %w{reset --hard})
+    end
+
+    def cleanup
+      cd_to_emacs_d
+      run_cmd("git", %w{clean -fd})
+    end
+
+    def raw_status_s
+      cd_to_emacs_d
+      run_cmd("git", %w{status -s})
+    end
+
   end
 
   option_parser = OptionParser.new do |opts|
@@ -330,46 +367,29 @@ EOD
     end
 
     opts.on "-K", "--cleanup", "Perform git cleanup in ~/.emacs.d" do
-      cd_to_emacs_d
-      run_cmd("git", ["clean", "-fd"] )
+      elpa.cleanup
+      exit(0)
     end
 
     opts.on "-X", "--reset-hard", "Perform git reset --hard on ~/.emacs.d" do
-      cd_to_emacs_d
-      run_cmd("git", ["reset", "--hard"] )
+      elpa.reset_hard
+      exit(0)
     end
 
     opts.on "-C", "--cleantxt", "Cleanup of ELPA .txt files" do
-      log("Cleaning out elpa .txt files")
-      unwanted_text_files_pattern = File.join(ENV["HOME"], "emacs.d", "elpa", "*.txt")
-      if Dir.glob(unwanted_text_files_pattern).empty?
-        log("There are no unwanted .txt files in elpa.")
-      else
-        Dir.glob(unwanted_text_files_pattern).each do |file|
-          log_warning("Deleting: #{file}")
-          File.delete(file)
-        end
-      end
-      log("done")
+      elpa.cleanup_txt
       exit(0)
     end
 
     opts.on("-R", "--reset-custom", "Reset custom.el") do
-      log("resetting custom.el")
-      cd_to_emacs_d
-      run_cmd("git", ["checkout", "custom/custom.el"])
-      log("done")
+      elpa.reset_custom
       exit(0)
     end
 
-    opts.on("--sync-down", "~/emacs.d git autostash / git pull --rebase (if nothing staged)") do
+    opts.on("--status", "~/emacs.d/git status -s") do
+      puts elpa.raw_status_s[1]
       exit(0)
     end
-
-    opts.on("--sync-up", "~/emacs.d git push (if new commits, no staged files)") do
-      exit(0)
-    end
-
   end
 
   option_parser.parse
