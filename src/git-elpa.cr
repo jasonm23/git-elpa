@@ -361,6 +361,15 @@ EOD
       log("done")
       exit(0)
     end
+
+    opts.on("--sync-down", "~/emacs.d git autostash / git pull --rebase (if nothing staged)") do
+      exit(0)
+    end
+
+    opts.on("--sync-up", "~/emacs.d git push (if new commits, no staged files)") do
+      exit(0)
+    end
+
   end
 
   option_parser.parse
