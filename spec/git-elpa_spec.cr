@@ -11,8 +11,9 @@ describe Git::Elpa do
     #     ├── FakePackageFour-0.1.0
     #     ├── FakePackageOne-0.1.0
     #     ├── FakePackageThree-0.1.0
-    #     └── FakePackageTwo-0.1.0
-    #
+    #     ├── FakePackageTwo-0.1.0
+    #     └── company-lsp-0.1.0
+
   end
 
   after_each do
